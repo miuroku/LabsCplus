@@ -1,0 +1,101 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+class MyRectangle{
+
+      public:
+             int x1, y1, x2, y2;
+             int height, width;
+
+      MyRectangle(int x, int y, int x2, int y2, int h, int w) : x1(x),y1(y),x2(x2),y2(y2),height(h),width(w){
+            x1 = x, y1 = y, this->x2 = x2, this->y2 = y2;
+            height = h, width = w;                          
+      }
+      MyRectangle():MyRectangle(400,600,220,400,200,180){      
+
+      }
+
+      void Show(){
+            int xtmp, ytmp;
+            xtmp = x1, ytmp = y1;
+            Form1->Canvas->MoveTo(x1,y1);            
+            ytmp -= height;
+            Form1->Canvas->LineTo(xtmp,ytmp);
+            xtmp -= width;
+            Form1->Canvas->LineTo(xtmp,ytmp);
+            ytmp += height;
+            Form1->Canvas->LineTo(xtmp,ytmp);            
+            xtmp += width;
+            Form1->Canvas->LineTo(xtmp,ytmp);
+      }
+
+      void Move(int x, int y){
+          x1 += x;
+          y1 += y;
+      }
+
+};
+
+
+class MyElevator : public MyRectangle {
+            
+      public:
+             int LineWidth = 6;
+             MyRectangle tempRect;                
+
+             void ShowRope(){
+                  int xbegin = 310, ybegin = 0;
+                  int xto = xbegin, yto = y1;
+                  yto -= height;
+                  
+                  Form1->Canvas->MoveTo(xbegin,ybegin);
+                  Form1->Canvas->LineTo(xto,yto);
+             }
+
+             void Show(){
+                  Form1->Canvas->Pen->Width = LineWidth;
+                  tempRect.Show();
+                  ShowRope();
+             }
+
+             
+};
+
+MyElevator* ElevObj = new MyElevator();
+
+void Draw(){
+     ElevObj->Show();
+}                       
+
+//---------------------------------------------------------------------------
+void __fastcall TForm1::ElevatorTrackBarChange(TObject *Sender)
+{
+     
+     //1. Изменяем значения y1,y2
+     //                 т.е. в зависимости от ElevatorTrackBar->Position
+     //                 т.е. ElevObj->y1 = ...
+     //                 и    ElevObj->y2 = ...
+     //                       ( должны изменяться на одинаковое значение )  
+     //           
+     //2. Перерисовываем обьект ElevObj
+
+     //ElevObj->y1 = 400 - (ElevatorTrackBar->Position * (400 / ElevatorTrackBar->Max) );
+     //ElevObj->y1 = 600 - ElevatorTrackBar->Position;      
+     
+     Draw();
+}
+//---------------------------------------------------------------------------

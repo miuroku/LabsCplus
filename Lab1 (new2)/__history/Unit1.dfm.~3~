@@ -1,0 +1,42 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 510
+  ClientWidth = 469
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object StartButton: TButton
+    Left = 16
+    Top = 24
+    Width = 97
+    Height = 49
+    Caption = 'Start'
+    TabOrder = 0
+    OnClick = StartButtonClick
+  end
+  object ElevatorTrackBar: TTrackBar
+    Left = 424
+    Top = 48
+    Width = 33
+    Height = 441
+    DoubleBuffered = True
+    Max = 180
+    Orientation = trVertical
+    ParentDoubleBuffered = False
+    ParentShowHint = False
+    Frequency = 20
+    ShowHint = False
+    ShowSelRange = False
+    TabOrder = 1
+    TickMarks = tmTopLeft
+    OnChange = ElevatorTrackBarChange
+  end
+end
