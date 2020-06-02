@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2020.06.02 11:09:55.895,=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2020.06.02 11:09:56.241,=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2020.06.02 11:10:30.807,C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit1.dfm=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2020.06.02 11:10:30.807,C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit1.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2020.06.02 11:10:30.807,C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit1.cpp=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2020.06.02 11:10:33.041,C:\Users\PC\Desktop\ClearLabs\Lab1.2\Project1PCH1.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2020.06.02 11:10:34.746,C:\Users\PC\Desktop\ClearLabs\Lab1.2\Project1.cbproj=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
+    <Transaction>2020.06.02 11:43:36.898,=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.cpp</Transaction>
+    <Transaction>2020.06.02 11:43:49.857,C:\Users\PC\Desktop\ClearLabs\Lab1.2\MyData.h=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.h</Transaction>
+    <Transaction>2020.06.02 11:43:49.857,C:\Users\PC\Desktop\ClearLabs\Lab1.2\MyData.cpp=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.cpp</Transaction>
+    <Transaction>2020.06.02 11:47:07.247,=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.cpp</Transaction>
+    <Transaction>2020.06.02 11:47:36.522,C:\Users\PC\Desktop\ClearLabs\Lab1.2\OurList.h=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.h</Transaction>
+    <Transaction>2020.06.02 11:47:36.522,C:\Users\PC\Desktop\ClearLabs\Lab1.2\OurList.cpp=C:\Users\PC\Desktop\ClearLabs\Lab1.2\Unit2.cpp</Transaction>
+  </Transactions>
+</BorlandProject>
