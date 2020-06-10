@@ -1,0 +1,651 @@
+// optional standard header
+#ifndef _OPTIONAL_
+#define _OPTIONAL_
+#include <functional>
+
+_STD_BEGIN
+class bad_optional_access
+	: public _XSTD exception
+	{	// signals access attempt for an empty optional object
+public:
+	typedef _XSTD exception _Mybase;
+
+	explicit bad_optional_access(const string& _Message)
+		: _Mybase(_Message.c_str())
+		{	// construct from message string
+		}
+
+	explicit bad_optional_access(
+		const char *_Message = "access to empty optional object")
+		: _Mybase(_Message)
+		{	// construct from message string
+		}
+	};
+
+struct nullopt_t
+	{	// flags comparison with empty
+	};
+
+_INLINE_VAR _CONST_DATA nullopt_t nullopt
+	{	// empty class
+	};
+
+		// TEMPLATE CLASS optional
+template<class _Ty>
+	class optional
+	{	// manages an optional object
+public:
+	typedef _Ty value_type;
+
+	_CONST_FUN optional() _NOEXCEPT
+		: _Exists(false)
+		{	// construct empty
+		}
+
+	_CONST_FUN optional(nullopt_t) _NOEXCEPT
+		: _Exists(false)
+		{	// construct empty
+		}
+
+	_CONST_FUN optional(const optional& _Right)
+		: _Exists(false)
+		{	// copy from non-empty _Right
+		if (_Right._Exists)
+			{	// copy nonempty object
+			::new ((void *)&_Myvalue) _Ty(_Right._Myvalue);
+			_Exists = true;
+			}
+		}
+
+	_CONST_FUN optional(optional&& _Right)
+		_NOEXCEPT_OP(is_nothrow_move_constructible<_Ty>::value)
+			: _Exists(false)
+		{	// move from non-empty _Right
+		if (_Right._Exists)
+			{	// move nonempty
+			::new ((void *)&_Myvalue)
+				_Ty(_STD forward<_Ty>(_Right._Myvalue));
+			_Exists = true;
+			}
+		}
+
+	template<class... _Types,
+		class = enable_if_t<
+			is_constructible<_Ty, _Types...>::value,
+			void> >
+		_CONST_FUN explicit optional(_STD in_place_t, _Types&&... _Args)
+			: _Exists(true),
+				_Myvalue(_STD forward<_Types>(_Args)...)
+		{	// construct with list of arguments
+		}
+
+	template<class _Other,
+		class... _Types,
+		class = enable_if_t<
+			is_constructible<_Ty,
+				_XSTD initializer_list<_Other>, _Types...>::value,
+					void> >
+		_CONST_FUN explicit optional(_STD in_place_t,
+			_XSTD initializer_list<_Other> _Ilist, _Types&&... _Args)
+			: _Exists(true),
+				_Myvalue(_Ilist, _STD forward<_Types>(_Args)...)
+		{	// construct with initializer_list, list of arguments
+		}
+
+	template<class _Uty = _Ty,
+		class = enable_if_t<
+			is_constructible<_Ty, _Uty&&>::value
+				&& !is_same<decay_t<_Uty>, in_place_t>::value
+				&& !is_same<optional<_Ty>, decay_t<_Uty> >::value,
+			void> >
+		_CONST_FUN explicit optional(_Uty&& _Right)
+			: _Exists(true),
+				_Myvalue(_STD forward<_Uty>(_Right))
+		{	// move non-empty _Right
+		}
+
+	template<class _Uty,
+		class = enable_if_t<
+			is_constructible<_Ty, const _Uty&>::value
+				&& !is_constructible<_Ty, optional<_Uty>&>::value
+				&& !is_constructible<_Ty, optional<_Uty>&&>::value
+				&& !is_constructible<_Ty, const optional<_Uty>&>::value
+				&& !is_constructible<_Ty, const optional<_Uty>&&>::value
+				&& !is_convertible<optional<_Uty>&, _Ty>::value
+				&& !is_convertible<optional<_Uty>&&, _Ty>::value
+				&& !is_convertible<const optional<_Uty>&, _Ty>::value
+				&& !is_convertible<const optional<_Uty>&&, _Ty>::value,
+			void> >
+		explicit optional(const optional<_Uty>& _Right)
+			: _Exists(false)
+		{	// copy non-empty _Right
+		if (_Right._Exists)
+			{	// move nonempty
+			::new ((void *)&_Myvalue) _Ty(_Right._Myvalue);
+			_Exists = true;
+			}
+		}
+
+	template<class _Uty,
+		class = enable_if_t<
+			is_constructible<_Ty, _Uty&&>::value
+				&& !is_constructible<_Ty, optional<_Uty>&>::value
+				&& !is_constructible<_Ty, optional<_Uty>&&>::value
+				&& !is_constructible<_Ty, const optional<_Uty>&>::value
+				&& !is_constructible<_Ty, const optional<_Uty>&&>::value
+				&& !is_convertible<optional<_Uty>&, _Ty>::value
+				&& !is_convertible<optional<_Uty>&&, _Ty>::value
+				&& !is_convertible<const optional<_Uty>&, _Ty>::value
+				&& !is_convertible<const optional<_Uty>&&, _Ty>::value,
+			void> >
+		explicit optional(optional<_Uty>&& _Right)
+			: _Exists(false)
+		{	// copy non-empty _Right
+		if (_Right._Exists)
+			{	// move nonempty
+			::new ((void *)&_Myvalue)
+				_Ty(_STD forward<_Uty>(_Right._Myvalue));
+			_Exists = true;
+			}
+		}
+
+	void _Destroy()
+		{	// destroy the object
+		if (!is_trivially_destructible<_Ty>::value && _Exists)
+			(&_Myvalue)->~_Ty();
+		_Exists = false;
+		}
+
+	~optional() _NOEXCEPT
+		{	// destroy the object
+		_Destroy();
+		}
+
+	optional& operator=(nullopt_t) _NOEXCEPT
+		{	// destroy the object
+		_Destroy();
+		return (*this);
+		}
+
+	optional& operator=(const optional& _Right)
+		{	// copy assign
+		if (!_Exists && !_Right._Exists)
+			;	// nothing to do
+		else if (!_Exists)
+			{	// copy construct from _Right
+			::new ((void *)&_Myvalue) _Ty(_Right._Myvalue);
+			_Exists = true;
+			}
+		else if (!_Right._Exists)
+			_Destroy();
+		else
+			_Myvalue = _Right._Myvalue;
+		return (*this);
+		}
+
+	optional& operator=(optional&& _Right)
+		_NOEXCEPT_OP(is_nothrow_move_constructible<_Ty>::value
+			&& is_nothrow_move_assignable<_Ty>::value)
+		{	// move assign
+		if (!_Exists && !_Right._Exists)
+			;	// nothing to do
+		else if (!_Exists)
+			{	// move construct from _Right
+			::new ((void *)&_Myvalue) _Ty(_STD move(_Right._Myvalue));
+			_Exists = true;
+			}
+		else if (!_Right._Exists)
+			_Destroy();
+		else
+			_Myvalue = _STD move(_Right._Myvalue);	// move assign
+		return (*this);
+		}
+
+	template<class _Other,
+		class = enable_if_t<
+			!is_same<optional<_Ty>, decay_t<_Other> >::value
+			&& is_constructible<_Ty, _Other>::value
+			&& is_assignable<_Ty&, _Other>::value,
+			void> >
+		optional& operator=(_Other&& _Right)
+		{	// move assign
+		if (_Exists)
+			_Myvalue = _STD forward<_Other>(_Right);	// move assign
+		else
+			{	// move construct from _Right
+			::new ((void *)&_Myvalue) _Ty(_STD forward<_Other>(_Right));
+			_Exists = true;
+			}
+		return (*this);
+		}
+
+	template<class... _Types>
+		_Ty& emplace(_Types&&... _Args)
+		{	// reconstruct in place from _Args...
+		_Destroy();
+		::new ((void *)&_Myvalue)
+			_Ty(_STD forward<_Types>(_Args)...);
+		_Exists = true;	// leave object destroyed if initializer throws
+		return (_Myvalue);
+		}
+
+	template<class _Other,
+		class... _Types,
+		class = enable_if_t<
+			is_constructible<_Ty, _XSTD initializer_list<_Other>&,
+				_Types&&...>::value,
+			void> >
+		_Ty& emplace(_XSTD initializer_list<_Other> _Ilist, _Types&&..._Args)
+		{	// reconstruct in place from _Ilist, _Args...
+		_Destroy();
+		::new ((void *)&_Myvalue)
+			_Ty(_Ilist, _STD forward<_Types>(_Args)...);
+		_Exists = true;	// leave object destroyed if initializer throws
+		return (_Myvalue);
+		}
+
+	void swap(optional<_Ty>& _Right)
+		_NOEXCEPT_OP(is_nothrow_move_constructible<_Ty>::value
+			&& is_nothrow_swappable<_Ty>::value)
+		{	// swap
+		if (!_Exists && !_Right._Exists)
+			;	// nothing to do
+		else if (!_Exists)
+			{	// move construct from _Right, destroy _Right
+			::new ((void *)&_Myvalue) _Ty(_STD move(_Right._Myvalue));
+			_Exists = true;
+			_Right._Destroy();
+			}
+		else if (!_Right._Exists)
+			{	// move construct from *this, destroy *this
+			::new ((void *)&_Right._Myvalue) _Ty(_STD move(_Myvalue));
+			_Right._Exists = true;
+			_Destroy();
+			}
+		else
+			{	// swap the values
+			_Ty _Temp = _STD move(_Myvalue);
+			_Myvalue = _STD move(_Right._Myvalue);
+			_Right._Myvalue = _STD move(_Temp);
+			}
+		}
+
+	_CONST_FUN const _Ty *operator->() const
+		{	// get &value
+		return (&_Myvalue);
+		}
+
+	_CONST_FUN _Ty *operator->()
+		{	// get &value
+		return (&_Myvalue);
+		}
+
+	_CONST_FUN const _Ty& operator*() const&
+		{	// get value
+		return (_Myvalue);
+		}
+
+	_CONST_FUN _Ty& operator*() &
+		{	// get value
+		return (_Myvalue);
+		}
+
+	_CONST_FUN _Ty&& operator*() &&
+		{	// get moved value
+		return (_STD move(_Myvalue));
+		}
+
+	_CONST_FUN const _Ty&& operator*() const &&
+		{	// get moved value
+		return (_STD move(_Myvalue));
+		}
+
+	_CONST_FUN explicit operator bool() const _NOEXCEPT
+		{	// test if value exists
+		return (_Exists);
+		}
+
+	_CONST_FUN bool has_value() const _NOEXCEPT
+		{	// test if value exists
+		return (_Exists);
+		}
+
+	_CONST_FUN _Ty& value() &
+		{	// get value or throw
+		if (!bool(*this))
+			_THROW_N(bad_optional_access, "optional<T> is empty");
+		return (_Myvalue);
+		}
+
+	_CONST_FUN const _Ty& value() const &
+		{	// get value or throw
+		if (!bool(*this))
+			_THROW_N(bad_optional_access, "optional<T> is empty");
+		return (_Myvalue);
+		}
+
+	_CONST_FUN _Ty&& value() &&
+		{	// get value or throw
+		if (!bool(*this))
+			_THROW_N(bad_optional_access, "optional<T> is empty");
+		return (_STD move(_Myvalue));
+		}
+
+	_CONST_FUN const _Ty&& value() const &&
+		{	// get value or throw
+		if (!bool(*this))
+			_THROW_N(bad_optional_access, "optional<T> is empty");
+		return (_STD move(_Myvalue));
+		}
+
+	template<class _Other>
+		_CONST_FUN _Ty value_or(_Other&& _Altval) const&
+		{	// get moved value or _Altval
+		if (!bool(*this))
+			return (static_cast<_Ty>(_STD forward<_Other>(_Altval)));
+		else
+			return (**this);
+		}
+
+	template<class _Other>
+		_CONST_FUN _Ty value_or(_Other&& _Altval) &&
+		{	// get value or _Altval
+		if (!bool(*this))
+			return (static_cast<_Ty>(_STD forward<_Other>(_Altval)));
+		else
+			return (_STD move(**this));
+		}
+
+	void reset() _NOEXCEPT
+		{	// destroy any stored value
+		_Destroy();
+		}
+
+private:
+	bool _Exists;
+	_Ty _Myvalue;
+	};
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator==(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left == _Right
+	return (bool(_Left) != bool(_Right) ? false
+		: bool(_Left) == false ? true
+		: *_Left == *_Right);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator==(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left == _Right
+	return (bool(_Left) ? *_Left == _Right : false);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator==(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left == _Right
+	return (bool(_Right) ? _Left == *_Right : false);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator==(const optional<_Ty>&
+		_Left, nullopt_t _Right)
+	{	// test if _Left == _Right
+	return (!_Left);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator==(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left == _Right
+	return (!_Right);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator!=(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left != _Right
+	return (!(_Left == _Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator!=(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left != _Right
+	return (!(_Left == _Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator!=(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left != _Right
+	return (!(_Left == _Right));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator!=(const optional<_Ty>& _Left,
+		nullopt_t _Right)
+	{	// test if _Left != _Right
+	return (!(_Left == _Right));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator!=(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left != _Right
+	return (!(_Left == _Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left < _Right
+	return (!_Right ? false
+		: !_Left ? true
+		: *_Left < *_Right);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left < _Right
+	return (bool(_Left) ? *_Left < _Right : true);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left < _Right
+	return (bool(_Right) ? _Left < *_Right : false);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator<(const optional<_Ty>& _Left,
+		nullopt_t _Right)
+	{	// test if _Left < _Right
+	return (false);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator<(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left < _Right
+	return (bool(_Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left > _Right
+	return (_Right < _Left);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left > _Right
+	return (_Right < _Left);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left > _Right
+	return (_Right < _Left);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator>(const optional<_Ty>& _Left,
+		nullopt_t _Right)
+	{	// test if _Left > _Right
+	return (_Right < _Left);
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator>(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left > _Right
+	return (_Right < _Left);
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<=(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left <= _Right
+	return (!(_Right < _Left));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<=(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left <= _Right
+	return (!(_Right < _Left));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator<=(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left <= _Right
+	return (!(_Right < _Left));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator<=(const optional<_Ty>& _Left,
+		nullopt_t _Right)
+	{	// test if _Left <= _Right
+	return (!(_Right < _Left));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator<=(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left <= _Right
+	return (!(_Right < _Left));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>=(const optional<_Ty>& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left >= _Right
+	return (!(_Left < _Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>=(const optional<_Ty>& _Left,
+		const _Uty& _Right)
+	{	// test if _Left >= _Right
+	return (!(_Left < _Right));
+	}
+
+template<class _Ty,
+	class _Uty>
+	_CONST_FUN bool operator>=(const _Ty& _Left,
+		const optional<_Uty>& _Right)
+	{	// test if _Left >= _Right
+	return (!(_Left < _Right));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator>=(const optional<_Ty>& _Left,
+		nullopt_t _Right)
+	{	// test if _Left >= _Right
+	return (!(_Left < _Right));
+	}
+
+template<class _Ty>
+	_CONST_FUN bool operator>=(nullopt_t _Left,
+		const optional<_Ty>& _Right)
+	{	// test if _Left >= _Right
+	return (!(_Left < _Right));
+	}
+
+template<class _Ty,
+	class = enable_if_t<
+		is_move_constructible<_Ty>::value && is_swappable<_Ty>::value,
+		void> >
+	void swap(optional<_Ty>& _Left, optional<_Ty>& _Right)
+		_NOEXCEPT_OP(_NOEXCEPT_OP(_Left.swap(_Right)))
+	{	// swap _Left and _Right
+	_Left.swap(_Right);
+	}
+
+template<class _Ty>
+	_CONST_FUN optional<decay_t<_Ty> > make_optional(_Ty&& _Value)
+	{	// make optional<_Ty> from _Value
+	return (optional<decay_t<_Ty> >(_STD forward<_Ty>(_Value)));
+	}
+
+template<class _Ty,
+	class... _Types>
+	_CONST_FUN optional<_Ty> make_optional(_Types&&... _Args)
+	{	// make optional<_Ty> from _Args...
+	return (optional<_Ty>(_STD in_place, _STD forward<_Types>(_Args)...));
+	}
+
+template<class _Ty,
+	class _Other,
+	class... _Types>
+	_CONST_FUN optional<_Ty> make_optional(
+		_XSTD initializer_list<_Other> _Ilist,_Types&&... _Args)
+	{	// make optional with initializer_list, _Args...
+	return (optional<_Ty>(_STD in_place,
+		_Ilist, _STD forward<_Ty>(_Args)...));
+	}
+_STD_END
+
+namespace std {
+	// TEMPLATE STRUCT SPECIALIZATION hash
+template<class _Ty>
+	struct hash<optional<_Ty> >
+	{	// hash functor for optional<_Ty>
+	size_t operator()(const optional<_Ty>& _Value) const
+		{	// hash _Value to size_t or throw
+		return (hash<_Ty>()(_Value.value_or(_Ty())));
+		}
+	};
+} // namespace std
+#endif /* _OPTIONAL_ */
+
+/*
+ * Copyright (c) by P.J. Plauger. All rights reserved.
+ * Consult your license regarding permissions and restrictions.
+V8.03a/17:1422 */
