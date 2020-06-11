@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2020.06.11 15:44:36.060,=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2020.06.11 15:44:36.328,=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2020.06.11 15:51:09.699,=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:51:21.320,C:\Users\PC\Documents\Embarcadero\Studio\Projects\Stack.cpp=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:51:21.320,C:\Users\PC\Documents\Embarcadero\Studio\Projects\Stack.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit2.h</Transaction>
+    <Transaction>2020.06.11 15:51:53.135,C:\Users\PC\Desktop\LabsC++\Lab7\Stack.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Stack.h</Transaction>
+    <Transaction>2020.06.11 15:51:53.135,C:\Users\PC\Desktop\LabsC++\Lab7\Stack.cpp=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Stack.cpp</Transaction>
+    <Transaction>2020.06.11 15:52:00.080,C:\Users\PC\Desktop\LabsC++\Lab7\Unit1.cpp=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2020.06.11 15:52:00.080,C:\Users\PC\Desktop\LabsC++\Lab7\Unit1.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2020.06.11 15:52:00.080,C:\Users\PC\Desktop\LabsC++\Lab7\Unit1.dfm=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2020.06.11 15:52:01.365,C:\Users\PC\Desktop\LabsC++\Lab7\Project1PCH1.h=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2020.06.11 15:52:02.967,C:\Users\PC\Desktop\LabsC++\Lab7\Project1.cbproj=C:\Users\PC\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
+    <Transaction>2020.06.11 15:52:51.326,=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:53:09.435,C:\Users\PC\Desktop\LabsC++\Lab7\MyHashTable.cpp=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:53:09.435,C:\Users\PC\Desktop\LabsC++\Lab7\MyHashTable.h=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.h</Transaction>
+    <Transaction>2020.06.11 15:55:14.674,=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:55:35.021,C:\Users\PC\Desktop\LabsC++\Lab7\ExtentionHashTable.cpp=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.cpp</Transaction>
+    <Transaction>2020.06.11 15:55:35.021,C:\Users\PC\Desktop\LabsC++\Lab7\ExtentionHashTable.h=C:\Users\PC\Desktop\LabsC++\Lab7\Unit2.h</Transaction>
+  </Transactions>
+</BorlandProject>
