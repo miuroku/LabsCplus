@@ -25,6 +25,7 @@ using namespace std;
 
 vector <Record> MyItems;
 vector <Record> SortedItems;
+vector <Record> SortedItems2; // by mark from to
 AnsiString StudyTypeFree = "бесплат.";
 AnsiString StudyTypePaid = "плат.";
 char sepor = '|';
@@ -281,6 +282,8 @@ void ShowSortedItems(){
              
          }
      }
+
+
      
      // добавить сортировку по оценкам тут .
      switch(Form1->RadioGroupAverageMark->ItemIndex){
@@ -333,4 +336,49 @@ void __fastcall TForm1::btnClearSortListClick(TObject *Sender)
      } 
 }
 //---------------------------------------------------------------------------
+
+void InitializeMyItems();
+
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+     SortedItems2.clear();
+     Form1->ListBox1->Clear();
+
+     InitializeMyItems();
+
+       for(int i = 0; i < MyItems.size(); i++) {
+               if (MyItems[i].AverageMark >= 7) {
+                  SortedItems2.push_back(MyItems[i]);
+               }
+       }
+
+       for (int i = 0; i < SortedItems2.size() - 1; i++) {
+           for (int j = 0; j < SortedItems2.size() - 1; j++) {
+               if (SortedItems2[j].AverageMark > SortedItems2[j+1].AverageMark) {               
+                         auto tmp = SortedItems2[j];
+                         SortedItems2[j] = SortedItems2[j+1];
+                         SortedItems2[j+1] = tmp;
+               }
+           }
+       }
+
+     for (int i = 0; i < SortedItems2.size(); i++) {
+         Form1->ListBox1->Items->Add( FormatRecord( SortedItems2[i] ) );
+     } 
+     
+}
+//---------------------------------------------------------------------------
+
+void InitializeMyItems(){
+
+     for (int i = 0; i < Form1->ListBox1->Items->Count ; i++) {
+         Record tmp;
+
+         tmp = FromStringToRecord(Form1->ListBox1->Items->Strings[i]);  
+
+         MyItems.push_back(tmp);       
+     }
+     
+}
 

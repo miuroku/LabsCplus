@@ -48,6 +48,7 @@ __published:	// IDE-managed Components
     TLabel *LabelAverageMark;
     TButton *btnSortList;
     TRadioGroup *RadioGroupAverageMark;
+    TButton *Button1;
     void __fastcall CheckBoxAddStudentClick(TObject *Sender);
     void __fastcall ListBox1Click(TObject *Sender);
     void __fastcall ButtonRemoveStudentClick(TObject *Sender);
@@ -56,6 +57,7 @@ __published:	// IDE-managed Components
     void __fastcall ButtonAddStudentClick(TObject *Sender);
     void __fastcall btnSortListClick(TObject *Sender);
     void __fastcall btnClearSortListClick(TObject *Sender);
+    void __fastcall Button1Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

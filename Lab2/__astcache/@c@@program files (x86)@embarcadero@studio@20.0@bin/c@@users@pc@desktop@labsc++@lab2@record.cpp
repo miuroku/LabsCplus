@@ -22,8 +22,8 @@ Record getRecord(){
     //Trim() - delete unneccecuary probels.
 	tmp.Name = Form1->EditName->Text.Trim();
 	if(tmp.Name.Length() == 0){
-		ShowMessage("Введите имя студента");
-		//throw 0;
+		ShowMessage("Р’РІРµРґРёС‚Рµ РёРјСЏ СЃС‚СѓРґРµРЅС‚Р°");
+		throw 0;
 	}    
     
     
@@ -34,57 +34,58 @@ Record getRecord(){
          tmp.TypeOfTraining = StudyTypeFree;
     }
     else if (Form1->RadioGroupTypeOfTraining->ItemIndex == -1) {
-         ShowMessage("Выберите форму обучения");         
-    }
+         ShowMessage("Р’С‹Р±РµСЂРёС‚Рµ С„РѕСЂРјСѓ РѕР±СѓС‡РµРЅРёСЏ");         
+         throw 0;
+    }           
 	else {
-		ShowMessage("Выберите форму обучения");
-		//throw 0;
+		ShowMessage("Р’С‹Р±РµСЂРёС‚Рµ С„РѕСЂРјСѓ РѕР±СѓС‡РµРЅРёСЏ");
+		throw 0;
 	}
 
     tmp.Specialty = Form1->EditSpecialty->Text.Trim();
     if(tmp.Specialty.Length() == 0){
-         ShowMessage("Введите Специальность");
-         //throw 0;
+         ShowMessage("Р’РІРµРґРёС‚Рµ РЎРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊ");
+         throw 0;
     }
     
 	try {
 		tmp.Group = StrToInt(Form1->EditGroup->Text);
-		if(tmp.Group < 0) ShowMessage("Некорректно введен номер группы");
+		if(tmp.Group < 0) ShowMessage("РќРµРєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµРґРµРЅ РЅРѕРјРµСЂ РіСЂСѓРїРїС‹");
 	} catch (...) {
-		ShowMessage("Введите номер группы");
-		//throw 0;
+		ShowMessage("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РіСЂСѓРїРїС‹");
+		throw 0;
 	}
 
 	try {
 		tmp.Math= StrToFloat(Form1->EditMath->Text);
         if (tmp.Math<0 || tmp.Math>10) {
-           ShowMessage("Некорректно введен балл");
-           //throw 0;    
+           ShowMessage("РќРµРєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµРґРµРЅ Р±Р°Р»Р»");
+           throw 0;    
         }
 	} catch (...) {
-		ShowMessage("Введите оценку по математике");
-		//throw 0;
+		ShowMessage("Р’РІРµРґРёС‚Рµ РѕС†РµРЅРєСѓ РїРѕ РјР°С‚РµРјР°С‚РёРєРµ");
+		throw 0;
 	}
 
     try {
 		tmp.Proga = StrToFloat(Form1->EditProga->Text);
         if (tmp.Proga<0 || tmp.Proga>10) {
-           ShowMessage("Некорректно введен балл");
-           //throw 0;    
+           ShowMessage("РќРµРєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµРґРµРЅ Р±Р°Р»Р»");
+           throw 0;    
         }
 	} catch (...) {
-		ShowMessage("Введите оценку по программированию");
-		//throw 0;
+		ShowMessage("Р’РІРµРґРёС‚Рµ РѕС†РµРЅРєСѓ РїРѕ РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёСЋ");
+		throw 0;
 	}
 
     try {
 		tmp.Philosophy= StrToFloat(Form1->EditPhilosophy->Text);
         if (tmp.Philosophy<0 || tmp.Philosophy>10) {
-           ShowMessage("Некорректно введен балл");
+           ShowMessage("РќРµРєРѕСЂСЂРµРєС‚РЅРѕ РІРІРµРґРµРЅ Р±Р°Р»Р»");
         }
 	} catch (...) {
-		ShowMessage("Введите оценку по философии");
-		//throw 0;
+		ShowMessage("Р’РІРµРґРёС‚Рµ РѕС†РµРЅРєСѓ РїРѕ С„РёР»РѕСЃРѕС„РёРё");
+		throw 0;
 	}
 
     tmp.AverageMark = ((float)(tmp.Math + tmp.Philosophy + tmp.Proga))/3.0;
@@ -118,7 +119,7 @@ AnsiString FormatRecord(Record tmp){
 
 Record FromStringToRecord(AnsiString ourStr){
        Record tmp;
-       int i = 0;
+       int i = 1;
        AnsiString tmpNameStr = "";
        AnsiString tmpTypeStr = "";
        AnsiString tmpSpecialtyStr = "";
@@ -186,7 +187,5 @@ Record FromStringToRecord(AnsiString ourStr){
        
 
        
-
-       //while
-
+       return tmp;
 }
